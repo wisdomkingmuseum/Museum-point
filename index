@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MUSEUM POINT | ในความทรงจำ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Sans Thai',sans-serif;color:#17406e;min-height:100vh;background:linear-gradient(180deg,#8fc7f0,#bfe0f7 28%,#dff0fb 55%,#eaf7e6);background-attachment:fixed}
+#jsflag{display:none;background:#25a06a;color:#fff;text-align:center;font-size:12px;padding:6px;font-weight:700}
+#errbox{display:none;background:#ffe3e1;color:#b3261e;font-size:12px;padding:10px;text-align:center;border-bottom:1px solid #f3b8b3}
+.app{max-width:520px;margin:0 auto;padding:14px 14px 40px;display:flex;flex-direction:column;gap:14px}
+.glass{background:rgba(255,255,255,.55);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid rgba(255,255,255,.7);border-radius:26px;box-shadow:0 12px 34px rgba(31,92,155,.16)}
+.card{padding:18px}
+.head{padding:16px 18px}.head-top{display:flex;gap:14px;align-items:center}
+.logo{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-size:30px;background:linear-gradient(145deg,#4a9fe8,#1f6bbd);box-shadow:0 8px 20px rgba(31,107,189,.4);flex:none}
+.head-sub{font-size:13px;color:#6b93bb}.head-title{font-size:25px;font-weight:800;color:#1c5a9e;line-height:1.15}
+.head-sub2{font-size:14px;font-weight:600;color:#2f7fd4}
+.head-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pill{background:rgba(255,255,255,.75);border:1px solid #fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:600}
+.score-head{display:flex;justify-content:space-between;align-items:center}
+.label{font-size:14px;font-weight:600;color:#6b93bb}
+.chip{border:none;border-radius:999px;padding:9px 16px;font-family:inherit;font-weight:700;font-size:14px;color:#8a5a00;background:linear-gradient(145deg,#ffe9a8,#ffcf5c);cursor:pointer}
+.score-main{display:flex;align-items:baseline;gap:12px;margin:6px 0 14px}
+.score-num{font-size:74px;font-weight:800;line-height:1;color:#1f6bbd}
+.score-unit{font-size:36px;font-weight:800;color:#1c5a9e}
+.score-foot{display:flex;justify-content:space-between;font-size:13px;color:#6b93bb;margin-bottom:7px}
+.bar{height:14px;border-radius:999px;background:rgba(255,255,255,.7);overflow:hidden;border:1px solid #fff}
+.bar-fill{height:100%;width:0;background:linear-gradient(90deg,#7cc4f5,#2f7fd4);transition:.5s}
+.score-mini{display:flex;justify-content:space-between;font-size:12px;color:#6b93bb;margin-top:8px}
+.scan-btn{display:flex;align-items:center;gap:14px;width:100%;border:1px solid rgba(255,255,255,.85);cursor:pointer;background:linear-gradient(140deg,#ffe9a8,#ffc94d);border-radius:26px;padding:16px 18px;font-family:inherit;box-shadow:0 14px 30px rgba(240,180,50,.38);text-align:left;color:#7a4e00}
+.scan-btn:active{transform:scale(.97)}
+.scan-ico{width:56px;height:56px;border-radius:18px;background:#20344a;color:#ffd35c;display:grid;place-items:center;font-size:28px;flex:none}
+.scan-txt{flex:1}.scan-txt b{font-size:19px;display:block}.scan-txt small{font-size:12.5px;opacity:.85}
+.scan-arrow{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.6);display:grid;place-items:center;font-size:24px}
+.tabs{display:flex;padding:6px;gap:6px}
+.tab{flex:1;border:none;background:transparent;border-radius:20px;padding:12px;font-family:inherit;font-size:15px;font-weight:700;color:#6b93bb;cursor:pointer}
+.tab.active{background:#fff;color:#1c5a9e;box-shadow:0 6px 14px rgba(31,92,155,.15)}
+.tabs.inner{margin:4px 0 14px;background:rgba(255,255,255,.55);border-radius:20px}
+.tabs.inner .tab{font-size:13px;padding:10px 4px}
+.note{display:flex;gap:12px;align-items:center;padding:14px 16px;border-left:5px solid #f7b733}
+.note small{color:#6b93bb;font-size:12.5px}
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sec-head h3{font-size:16.5px}
+.count{background:rgba(255,255,255,.8);border-radius:999px;padding:5px 13px;font-size:12.5px;font-weight:700;color:#6b93bb}
+.filter{display:flex;gap:7px;margin-bottom:10px}
+.f{border:1px solid rgba(255,255,255,.9);background:rgba(255,255,255,.5);border-radius:999px;padding:6px 14px;font-family:inherit;font-size:12.5px;font-weight:600;color:#6b93bb;cursor:pointer}
+.f.active{background:#2f7fd4;color:#fff;border-color:#2f7fd4}
+.point-list{max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.pt{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.6);border:1px solid #fff;border-radius:18px;padding:11px 13px}
+.pt.done{background:rgba(219,245,228,.85);border-color:#bfe6cb}
+.pt-no{width:34px;height:34px;border-radius:12px;background:#e8f2fb;color:#2f7fd4;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.pt.done .pt-no{background:#38a86a;color:#fff}
+.pt-name{flex:1;font-size:14px;font-weight:600;line-height:1.3}
+.pt-pts{font-size:12px;font-weight:800;color:#c98a00;background:#fff3d0;border-radius:999px;padding:4px 10px;flex:none}
+.pt.done .pt-pts{color:#2d8a58;background:#dff3e6}
+.his{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-radius:16px;background:rgba(255,255,255,.6);margin-bottom:8px;border:1px solid #fff}
+.his b{font-size:14px}.his small{color:#6b93bb;font-size:11.5px}
+.empty{text-align:center;padding:26px 10px;color:#6b93bb}.empty .big{font-size:44px;margin-bottom:6px}
+.reward-list{display:flex;flex-direction:column;gap:11px}
+.rw{display:flex;align-items:center;gap:13px;border-radius:22px;padding:14px;border:1px solid #fff;background:rgba(255,255,255,.62)}
+.rw-ico{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-size:28px;flex:none}
+.rw-info{flex:1}.rw-info b{font-size:16px;display:block}.rw-info small{color:#6b93bb;font-size:12.5px}
+.rw button{border:none;border-radius:999px;padding:10px 17px;font-family:inherit;font-weight:700;font-size:13.5px;color:#fff;background:linear-gradient(140deg,#4aa3ea,#1f6bbd);cursor:pointer}
+.rw button:disabled{background:#cfdbe6;color:#8ea4b8}
+.tk{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.65);border:1px dashed #9fc6e8;border-radius:18px;padding:12px;margin-bottom:9px}
+.tk-s{display:inline-block;font-size:11.5px;font-weight:800;padding:4px 10px;border-radius:999px}
+.s-wait{background:#fff0cf;color:#b4820d}.s-ok{background:#dff3e6;color:#2d8a58}
+.modal{position:fixed;inset:0;background:rgba(18,52,86,.5);z-index:90;display:none;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.sheet{width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:#f2f9fe;border-radius:28px 28px 0 0;padding:18px}
+.sheet.center{text-align:center}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.sheet-head h3{font-size:17px}
+.x{border:none;background:rgba(0,0,0,.07);width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;color:#17406e}
+#reader{border-radius:20px;overflow:hidden;background:#000;min-height:230px}
+.scan-hint{text-align:center;font-size:13px;color:#6b93bb;margin:10px 0}
+.manual{display:flex;gap:8px}.manual input{flex:1}
+input,textarea{width:100%;font-family:inherit;font-size:15px;padding:12px 14px;border-radius:16px;border:1px solid #cfe3f3;background:#fff;color:#17406e;outline:none}
+.manual button,#btnLogin{border:none;border-radius:16px;padding:0 18px;font-family:inherit;font-weight:700;color:#fff;background:#2f7fd4;cursor:pointer}
+.primary{width:100%;border:none;border-radius:20px;padding:15px;font-family:inherit;font-size:16px;font-weight:700;color:#fff;background:linear-gradient(140deg,#4aa3ea,#1f6bbd);cursor:pointer;margin-top:6px}
+.form{display:flex;flex-direction:column;gap:14px}
+.form label{font-size:14.5px;font-weight:600;display:block}
+.form label input,.form label textarea{margin-top:7px}
+.form i{color:#e3504a;font-style:normal}
+fieldset{border:1px solid #d7e8f6;border-radius:18px;padding:12px 14px;background:#fff}
+legend{font-size:14.5px;font-weight:600;padding:0 6px}
+.r{display:flex;align-items:center;gap:9px;padding:8px 2px;font-weight:500!important}
+.r input{width:20px;height:20px;accent-color:#2f7fd4;flex:none}
+.sat{display:flex;gap:6px;flex-wrap:wrap}
+.sat button{flex:1;min-width:62px;border:1px solid #cfe3f3;background:#fff;border-radius:14px;padding:10px 4px;font-family:inherit;font-size:13px;font-weight:600;color:#6b93bb;cursor:pointer}
+.sat button.on{background:#2f7fd4;color:#fff;border-color:#2f7fd4}
+
+/* Highlight Box */
+.highlight-box{padding:16px;border-left:5px solid #2f7fd4;background:rgba(255,255,255,.7)}
+.highlight-box h4{font-size:15px;color:#1c5a9e;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.hl-item{font-size:13.5px;color:#335c88;margin-bottom:6px;line-height:1.4}
+.hl-item b{color:#17406e}
+
+/* Popup คะแนนกลางจอ & ดาวกระจาย */
+.modal-center{align-items:center!important}
+.pop-card{background:#fff;border-radius:30px;padding:30px 20px;width:86%;max-width:340px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.2);animation:popIn .3s ease;position:relative;overflow:hidden}
+@keyframes popIn{0%{transform:scale(0.7);opacity:0}100%{transform:scale(1);opacity:1}}
+.pop-ico{font-size:60px;margin-bottom:10px;animation:bounce 1s infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.pop-title{font-size:16px;color:#6b93bb;font-weight:600}
+.pop-score{font-size:46px;font-weight:800;color:#2f7fd4;margin:5px 0 15px}
+.star{position:absolute;font-size:24px;animation:flyStar 0.8s forwards linear;pointer-events:none}
+@keyframes flyStar{0%{transform:translate(0,0) scale(0.5);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(1.4);opacity:0}}
+
+.admin-foot{padding:16px;text-align:center}
+.admin-title{font-size:14px;font-weight:700;color:#6b93bb;margin-bottom:10px}
+.admin-row{display:flex;gap:8px}
+.err{color:#e3504a;font-size:12.5px;margin-top:7px;min-height:16px}
+.copy{margin-top:10px;font-size:11.5px;color:#93b2cc}
+.muted{font-size:13px;color:#6b93bb;margin-bottom:10px}
+.qr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+.qr-item{background:#fff;border:1px solid #dceaf6;border-radius:16px;padding:10px;text-align:center}
+.qr-item .n{font-size:11.5px;font-weight:700;margin-top:6px;line-height:1.25}
+.qr-item .c{font-size:10px;color:#8aa6bd}
+.vr{background:#fff;border-radius:18px;padding:14px;margin-top:12px;border:1px solid #dceaf6}
+.hidden{display:none!important}
+#toast{position:fixed;left:50%;top:20px;transform:translateX(-50%) translateY(-160px);z-index:200;background:rgba(23,64,110,.95);color:#fff;padding:13px 22px;border-radius:999px;font-size:14px;font-weight:600;transition:.35s;max-width:90vw;text-align:center;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+@media print{body *{visibility:hidden}#qrGrid,#qrGrid *{visibility:visible}#qrGrid{position:absolute;left:0;top:0;width:100%;grid-template-columns:repeat(3,1fr)}.qr-item{break-inside:avoid;border:1px dashed #999}}
+</style>
+</head>
+<body>
+<div id="jsflag">✅ ระบบพร้อมใช้งาน · เชื่อมต่อ Google Sheet แล้ว</div>
+<div id="errbox"></div>
+
+<div class="app">
+  <header class="glass head">
+    <div class="head-top"><div class="logo">🏛️</div>
+      <div><div class="head-sub">พิพิธภัณฑ์การเกษตรฯ</div>
+      <h1 class="head-title">MUSEUM POINT</h1>
+      <div class="head-sub2">งานมหกรรม “ในความทรงจำ”</div></div></div>
+    <div class="head-meta"><span class="pill">📅 10–13 ตุลาคม 2569</span><span class="pill">🕗 08.00 – 17.00 น.</span></div>
+  </header>
+
+  <section class="glass card">
+    <div class="score-head"><span class="label">คะแนนสะสมของคุณ</span>
+      <button class="chip" onclick="goPoints()">📍 จุด ›</button></div>
+    <div class="score-main"><div class="score-num" id="scoreNum">0</div><div class="score-unit">คะแนน</div></div>
+    <div class="score-foot"><span>จำนวนจุดที่สแกนแล้ว</span><span id="scanCount">สแกนแล้ว 0 จุด</span></div>
+    <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+    <div class="score-mini"><span>ได้มาทั้งหมด <b id="earned">0</b></span><span>ใช้ไปแล้ว <b id="spent">0</b></span></div>
+  </section>
+
+  <button class="scan-btn" onclick="startScan('checkin')">
+    <span class="scan-ico">▣</span>
+    <span class="scan-txt"><b>สแกน QR Code เช็คอิน</b><small>กดเพื่อเปิดกล้องสแกนรับคะแนนตามจุด</small></span>
+    <span class="scan-arrow">›</span>
+  </button>
+
+  <div class="glass tabs">
+    <button class="tab active" id="tb-points" onclick="switchTab('points')">📍 จุดเช็คอิน</button>
+    <button class="tab" id="tb-rewards" onclick="switchTab('rewards')">🎁 แลกของรางวัล</button>
+  </div>
+
+  <section id="tab-points" style="display:flex;flex-direction:column;gap:14px">
+    <div class="note glass"><div style="font-size:26px">🏪</div>
+      <div><b>ศูนย์แลกของที่ระลึก</b><br><small>นำคะแนนที่สะสมได้มาแลกรับของรางวัลพิเศษ ณ บูธกิจกรรมหลัก</small></div></div>
+    <div class="glass card">
+      <div class="sec-head"><h3>🗺️ รายการจุดเช็คอินทั้งหมด</h3><span class="count" id="ptDone">0/40</span></div>
+      <div class="filter">
+        <button class="f active" id="f-all" onclick="setFilter('all')">ทั้งหมด</button>
+        <button class="f" id="f-todo" onclick="setFilter('todo')">ยังไม่สแกน</button>
+        <button class="f" id="f-done" onclick="setFilter('done')">สแกนแล้ว</button>
+      </div>
+      <div id="pointList" class="point-list"></div>
+    </div>
+  </section>
+
+  <section id="tab-rewards" style="display:none;flex-direction:column;gap:14px">
+    <div class="glass card">
+      <div class="sec-head"><h3>🎁 ของรางวัล</h3><span class="count" id="myBal">0 คะแนน</span></div>
+      <div id="rewardList" class="reward-list"></div>
+    </div>
+    <div class="glass card">
+      <div class="sec-head"><h3>🎫 บัตรรับของรางวัลของฉัน</h3></div>
+      <div id="ticketList"></div>
+    </div>
+  </section>
+
+  <!-- พื้นที่ประชาสัมพันธ์ไฮไลท์งาน -->
+  <div class="glass highlight-box">
+    <h4>📢 ไฮไลท์งาน วันที่ 13 ตุลาคม 2569</h4>
+    <div class="hl-item">⏰ <b>08.00 น.</b> ทำบุญตักบาตร ข้าวสารอาหารแห้ง</div>
+    <div class="hl-item" style="margin-bottom:10px">⏰ <b>15.52 น.</b> กิจกรรมน้อมรำลึก</div>
+    <div class="hl-item">📢 <b>กิจกรรมประกวดภาพถ่ายในความทรงจำ</b><br>ชิงรางวัลกว่า 5,000 บาท</div>
+  </div>
+
+  <footer class="glass admin-foot">
+    <div class="admin-title">🔐 สำหรับเจ้าหน้าที่ (Admin)</div>
+    <div class="admin-row">
+      <input type="password" id="adminPin" inputmode="numeric" placeholder="กรอกรหัสผ่าน">
+      <button id="btnLogin" onclick="adminLogin()">เข้าสู่ระบบ</button>
+    </div>
+    <div class="err" id="adminErr"></div>
+    <div class="copy">MUSEUM POINT · งานมหกรรม “ในความทรงจำ” 2569</div>
+  </footer>
+</div>
+
+<div class="modal" id="mdScan"><div class="sheet">
+  <div class="sheet-head"><h3 id="scanTitle">สแกน QR Code</h3><button class="x" onclick="closeScan()">✕</button></div>
+  <div id="reader"></div>
+  <div class="scan-hint" id="scanHint">หันกล้องไปที่ QR Code ประจำจุด</div>
+  <div class="manual"><input id="manualCode" placeholder="หรือกรอกรหัสลับประจำจุด"><button onclick="useManual()">ยืนยัน</button></div>
+</div></div>
+
+<!-- Popup แสดงคะแนนกลางจอ -->
+<div class="modal modal-center" id="mdPopup">
+  <div class="pop-card" id="popCard">
+    <div class="pop-ico">🎉</div>
+    <div class="pop-title" id="popName">เช็คอินสำเร็จ!</div>
+    <div class="pop-score" id="popPts">+5 คะแนน</div>
+    <button class="primary" onclick="closePopup()">ตกลง</button>
+  </div>
+</div>
+
+<div class="modal" id="mdSurvey"><div class="sheet">
+  <div class="sheet-head"><h3>📝 แบบสอบถามก่อนรับของรางวัล</h3><button class="x" onclick="closeM('mdSurvey')">✕</button></div>
+  <form id="surveyForm" class="form" onsubmit="return submitSurvey(event)">
+    <label>1. ชื่อ–นามสกุล <i>*</i><input name="fullname" required></label>
+    <label>2. อายุ <i>*</i><input name="age" type="number" min="1" max="120" required></label>
+    <label>3. ที่อยู่ / โซนที่อยู่อาศัย <i>*</i><input name="address" required></label>
+    <fieldset><legend>4. การเดินทาง <i>*</i></legend>
+      <label class="r"><input type="radio" name="travel" value="รถส่วนตัว" required><span>รถส่วนตัว</span></label>
+      <label class="r"><input type="radio" name="travel" value="รถสาธารณะ"><span>รถสาธารณะ</span></label></fieldset>
+    <fieldset><legend>5. หากมีรถรับ–ส่ง ฟิวเจอร์รังสิต – พิพิธภัณฑ์ จะทำให้ตัดสินใจมาง่ายขึ้นหรือไม่ <i>*</i></legend>
+      <label class="r"><input type="radio" name="shuttle" value="ไม่มีผลต่อการตัดสินใจ" required><span>ไม่มีผลต่อการตัดสินใจ</span></label>
+      <label class="r"><input type="radio" name="shuttle" value="มีผลต่อการตัดสินใจ"><span>มีผลต่อการตัดสินใจ</span></label></fieldset>
+    <fieldset><legend>6. เคยมาเที่ยวพิพิธภัณฑ์การเกษตรฯ กี่ครั้ง <i>*</i></legend>
+      <label class="r"><input type="radio" name="visits" value="ครั้งแรก" required><span>ครั้งแรก</span></label>
+      <label class="r"><input type="radio" name="visits" value="2-5 ครั้ง"><span>2–5 ครั้ง</span></label>
+      <label class="r"><input type="radio" name="visits" value="6 ครั้งขึ้นไป"><span>6 ครั้งขึ้นไป</span></label></fieldset>
+    <fieldset><legend>7. ความพึงพอใจต่อกิจกรรมนี้ <i>*</i></legend><div class="sat" id="satBox"></div></fieldset>
+    <label>8. ข้อเสนอแนะ<textarea name="suggest" rows="3" placeholder="(ไม่บังคับ)"></textarea></label>
+    <button class="primary" type="submit">ส่งคำตอบ &amp; ยืนยันการแลกของรางวัล</button>
+  </form>
+</div></div>
+
+<div class="modal" id="mdTicket"><div class="sheet center">
+  <div class="sheet-head"><h3>🎫 บัตรรับของรางวัล</h3><button class="x" onclick="closeTicket()">✕</button></div>
+  <div id="ticketBody"></div>
+</div></div>
+
+<div class="modal" id="mdAdmin"><div class="sheet">
+  <div class="sheet-head"><h3>🛠️ ระบบเจ้าหน้าที่</h3><button class="x" onclick="closeAdmin()">✕</button></div>
+  <div class="tabs inner">
+    <button class="tab active" id="at-verify" onclick="switchAdmin('verify')">✅ ยืนยันรับของ</button>
+    <button class="tab" id="at-gen" onclick="switchAdmin('gen')">🖨️ สร้าง QR</button>
+    <button class="tab" id="at-log" onclick="switchAdmin('log')">📋 ประวัติ</button>
+  </div>
+  <div id="atab-verify">
+    <p class="muted">สแกนบัตรรับของรางวัลของผู้ร่วมสนุก เพื่อยืนยันการรับของที่ระลึก</p>
+    <button class="primary" onclick="startScan('admin')">📷 เปิดกล้องสแกนบัตร</button>
+    <div id="verifyResult"></div>
+  </div>
+  <div id="atab-gen" class="hidden">
+    <p class="muted">กดพิมพ์เพื่อออกใบ QR ติดตามจุดต่าง ๆ ทั้ง 40 จุด</p>
+    <button class="primary" onclick="window.print()">🖨️ พิมพ์ QR ทั้งหมด</button>
+    <div id="qrGrid" class="qr-grid"></div>
+  </div>
+  <div id="atab-log" class="hidden"><div id="adminLog"></div></div>
+</div></div>
+
+<div id="toast"></div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+window.onerror=function(m,s,l){if(l>0){var b=g('errbox');b.style.display='block';b.textContent='⚠️ แจ้งเตือน: '+m;}};
+
+var CONFIG={
+  GAS_URL:"https://script.google.com/macros/s/AKfycbzuJrVNTOlgpawOaMgXcAuT4k4Y_yg6Qb7RgNnhsjpViLwIFSLx9PW6j7PWazZosNgU/exec",
+  ADMIN_PIN:"1234", PP:"MSP69-", PT:"MSP69T|"
+};
+
+var NAMES=["ซุ้มประตูทางเข้า ในความทรงจำ","ลานเมฆขาวต้อนรับ","โถงแห่งความทรงจำ","ห้องฉายภาพยนตร์ 3 มิติ","นิทรรศการในหลวงรักเรา","ห้องเรื่องของพ่อในบ้านของเรา","โซนน้ำคือชีวิต","โซนดินคือชีวิต","โซนป่าคือชีวิต","นวัตกรรมเกษตรเศรษฐกิจพอเพียง","บ้านดินมหัศจรรย์","สวนสมุนไพรไทย","นาข้าวสาธิต","ลานนวดข้าวภูมิปัญญา","บ้านต้นไม้แห่งความสุข","โซนเกษตรอินทรีย์วิถีไทย","โรงเรือนผักปลอดภัย","ลานเพาะกล้าไม้","บ่อปลาพอเพียง","เล้าไก่ไข่อารมณ์ดี","โซนปุ๋ยหมักชีวภาพ","พิพิธภัณฑ์มหัศจรรย์พันธุกรรม","โซนเกษตรพอเพียงเมือง","ตลาดนัดเศรษฐกิจพอเพียง","ลานวัฒนธรรมพื้นบ้าน","เวทีการแสดงกลางงาน","โซนหัตถกรรมภูมิปัญญา","ลานกิจกรรมเด็กและครอบครัว","จุดชมวิวทุ่งหญ้าเมฆลอย","ศาลาพักใจริมน้ำ","หอเทิดพระเกียรติ ร.9","ห้องทรงงานจำลอง","นิทรรศการ ในความทรงจำ ชั้น 2","โดมภาพยนตร์ดวงดาวแห่งความทรงจำ","ห้องสมุดแห่งแผ่นดิน","โซนโครงการหลวงบนดอยสูง","ฝายชะลอน้ำจำลอง","แปลงเกษตรทฤษฎีใหม่","หอคอยเมฆา ชมวิว 360 องศา","บูธกิจกรรมหลัก ศูนย์แลกของที่ระลึก"];
+
+// สร้างรหัสลับสุ่มเฉพาะจุด ป้องกันการเดา (แต่ระบบจำแนกอัตโนมัติ)
+var SECRETS = ["K9m#8X","p2L$7q","R4w!9N","b6H%2v","t1Y&5m","f8C*3x","D3j(6z","m7P)4k","V9s#1w","q5L$8r","x2N!6t","H4v%9m","J8b&2p","k1X*7q","L6m(3n","Z9c)5v","w3R#1x","n8H$4k","y2T!9m","c5V%6p","b7N&8x","v1M*2q","m4K(3t","x9L#5r","z6J$1n","h3P!7v","n2R%4m","k8X&9x","p5C*1q","m1V(6t","t7N#3k","r4H$8m","q9Z!2p","x3L%5v","n6K&1x","b2M*7q","h8P(4t","z1R#9m","v5N$2k","m9X!6v"];
+
+var POINTS=[];
+for(var i=0;i<NAMES.length;i++){
+  POINTS.push({
+    id:"P"+("0"+(i+1)).slice(-2),
+    code: CONFIG.PP + SECRETS[i], // รหัส QR ประจำจุดแบบสุ่มยากต่อการเดา
+    no:i+1,
+    name:NAMES[i],
+    pts:i<30?5:15
+  });
+}
+
+var REWARDS=[{id:"silver",name:"เหรียญเงิน",cost:50,ico:"🥈",bg:"linear-gradient(145deg,#e8eef5,#b9c7d6)"},{id:"gold",name:"เหรียญทอง",cost:100,ico:"🥇",bg:"linear-gradient(145deg,#ffe9a8,#f0b429)"},{id:"diamond",name:"เพชร",cost:200,ico:"💎",bg:"linear-gradient(145deg,#d9f2ff,#7cc4f5)"},{id:"supernova",name:"ซุปเปอร์โนว่า",cost:300,ico:"🌟",bg:"linear-gradient(145deg,#ffd6f0,#b07cf5)"}];
+
+var S;
+try{S=JSON.parse(localStorage.getItem("msp69"));}catch(e){S=null;}
+if(!S){S={uid:"U"+Date.now().toString(36).toUpperCase(),scanned:[],tickets:[],survey:null,spent:0};}
+if(!S.pending){S.pending=[];}
+function save(){try{localStorage.setItem("msp69",JSON.stringify(S));}catch(e){}}
+function g(id){return document.getElementById(id);}
+function earned(){var t=0;for(var i=0;i<S.scanned.length;i++)t+=S.scanned[i].pts;return t;}
+function balance(){return earned()-S.spent;}
+function toast(m){var t=g("toast");t.textContent=m;t.className="show";clearTimeout(t._);t._=setTimeout(function(){t.className="";},3000);}
+function openM(id){g(id).className="modal show";}
+function closeM(id){g(id).className="modal";}
+function goPoints(){g("pointList").scrollIntoView({behavior:"smooth"});}
+
+/* ===== เสียงเหรียญ & เอฟเฟกต์ดาวกระจาย ===== */
+function playCoinSound(){
+  try{
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(987.77, ctx.currentTime);
+    osc.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(); osc.stop(ctx.currentTime + 0.4);
+  }catch(e){}
+}
+
+function triggerStars(){
+  var card = g("popCard");
+  for(var i=0; i<12; i++){
+    var star = document.createElement("div");
+    star.className = "star";
+    star.innerHTML = "⭐";
+    var angle = Math.random() * Math.PI * 2;
+    var dist = 80 + Math.random() * 80;
+    star.style.setProperty("--tx", Math.cos(angle)*dist + "px");
+    star.style.setProperty("--ty", Math.sin(angle)*dist + "px");
+    star.style.left = "50%"; star.style.top = "40%";
+    card.appendChild(star);
+    setTimeout(function(s){ s.remove(); }, 800, star);
+  }
+}
+
+function showPopup(name, pts){
+  playCoinSound();
+  g("popName").textContent = name;
+  g("popPts").textContent = "+" + pts + " คะแนน";
+  openM("mdPopup");
+  triggerStars();
+}
+function closePopup(){ closeM("mdPopup"); }
+
+/* ===== ส่งข้อมูลผ่าน iframe ===== */
+function sendToBeacon(d,onSuccess){
+  if(!CONFIG.GAS_URL)return;
+  var iframeName="gas_iframe_"+Date.now();
+  var iframe=document.createElement("iframe");
+  iframe.name=iframeName;iframe.style.display="none";
+  document.body.appendChild(iframe);
+  var form=document.createElement("form");
+  form.method="POST";form.action=CONFIG.GAS_URL;form.target=iframeName;
+  var input=document.createElement("input");
+  input.type="hidden";input.name="data";input.value=JSON.stringify(d);
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(function(){
+    try{document.body.removeChild(form);document.body.removeChild(iframe);}catch(e){}
+    onSuccess&&onSuccess();
+  },1500);
+}
+
+/* ===== [ADD] อ่านสถานะจาก GAS แบบ JSONP ===== */
+function gasGet(params,cb){
+  if(!CONFIG.GAS_URL){cb&&cb(null);return;}
+  var cbName="gascb_"+Date.now()+"_"+Math.floor(Math.random()*10000);
+  var done=false,sc;
+  function cleanup(){try{document.body.removeChild(sc);}catch(e){}try{delete window[cbName];}catch(e){window[cbName]=null;}}
+  window[cbName]=function(res){if(done)return;done=true;cleanup();cb&&cb(res);};
+  var qs=[];
+  for(var k in params)qs.push(encodeURIComponent(k)+"="+encodeURIComponent(params[k]));
+  qs.push("callback="+cbName);
+  sc=document.createElement("script");
+  sc.src=CONFIG.GAS_URL+"?"+qs.join("&");
+  sc.onerror=function(){if(!done){done=true;cleanup();cb&&cb(null);}};
+  document.body.appendChild(sc);
+  setTimeout(function(){if(!done){done=true;cleanup();cb&&cb(null);}},9000);
+}
+
+/* ===== [ADD] ค้นบันทึกการจ่ายของในเครื่องแอดมิน (กันซ้ำแบบออฟไลน์) ===== */
+function findGiven(code){
+  for(var i=0;i<LOG.length;i++)if(LOG[i].code===code)return LOG[i];
+  return null;
+}
+
+/* ===== [ADD] กล่องแจ้งเตือนว่าบัตรถูกใช้แล้ว ===== */
+function showGivenBox(r,code,uid,time){
+  g("verifyResult").innerHTML='<div class="vr" style="text-align:center;border:2px solid #e11d48;background:#fff1f2">'+
+    '<div style="font-size:44px">⛔</div><b style="color:#e11d48;font-size:17px">บัตรนี้รับของไปแล้ว</b>'+
+    '<p class="muted">'+r.ico+' '+r.name+'<br>รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+
+    (time?'<br>เวลาที่รับ: '+time:'')+'</p>'+
+    '<button class="primary" onclick="startScan(\'admin\')">📷 สแกนใบถัดไป</button></div>';
+  toast("⛔ บัตรนี้ถูกใช้รับของไปแล้ว");
+}
+
+/* ===== [ADD] ฝั่งผู้เล่น: ดึงสถานะ "รับแล้ว" จากเซิร์ฟเวอร์ ===== */
+function syncTickets(cb){
+  if(!S.tickets||!S.tickets.length){cb&&cb(false);return;}
+  gasGet({action:"status",uid:S.uid},function(res){
+    if(!res||!res.ok||!res.codes){cb&&cb(false);return;}
+    var map={},changed=false,i;
+    for(i=0;i<res.codes.length;i++)map[String(res.codes[i]).toUpperCase()]=1;
+    for(i=0;i<S.tickets.length;i++){
+      if(!S.tickets[i].confirmed&&map[String(S.tickets[i].code).toUpperCase()]){
+        S.tickets[i].confirmed=true;changed=true;
+      }
+    }
+    if(changed){save();render();}
+    cb&&cb(changed);
+  });
+}
+
+/* ===== [ADD] ตรวจสถานะซ้ำ ๆ ขณะเปิดบัตร QR อยู่ ===== */
+var tkPoll=null,tkPollN=0;
+function stopTkPoll(){if(tkPoll){clearInterval(tkPoll);tkPoll=null;}tkPollN=0;}
+function startTkPoll(code){
+  stopTkPoll();
+  tkPoll=setInterval(function(){
+    tkPollN++;
+    if(tkPollN>60){stopTkPoll();return;}
+    syncTickets(function(changed){
+      if(!changed)return;
+      for(var i=0;i<S.tickets.length;i++){
+        if(S.tickets[i].code===code&&S.tickets[i].confirmed){
+          stopTkPoll();showTicket(code);toast("✅ รับของเรียบร้อยแล้ว");
+        }
+      }
+    });
+  },5000);
+}
+function closeTicket(){stopTkPoll();closeM("mdTicket");}
+
+var FILTER="all";
+function setFilter(f){FILTER=f;g("f-all").className="f";g("f-todo").className="f";g("f-done").className="f";g("f-"+f).className="f active";renderPoints();}
+function switchTab(t){
+  g("tb-points").className=t==="points"?"tab active":"tab";
+  g("tb-rewards").className=t==="rewards"?"tab active":"tab";
+  g("tab-points").style.display=t==="points"?"flex":"none";
+  g("tab-rewards").style.display=t==="rewards"?"flex":"none";
+}
+function switchAdmin(t){
+  var a=["verify","gen","log"];
+  for(var i=0;i<a.length;i++){g("at-"+a[i]).className=a[i]===t?"tab active":"tab";g("atab-"+a[i]).className=a[i]===t?"":"hidden";}
+}
+function qrImg(text,size){
+  var im=document.createElement("img");
+  im.src="https://api.qrserver.com/v1/create-qr-code/?size="+size+"x"+size+"&data="+encodeURIComponent(text);
+  im.style.width=size+"px";im.style.height=size+"px";return im;
+}
+
+function render(){
+  g("scoreNum").textContent=balance();
+  g("earned").textContent=earned();
+  g("spent").textContent=S.spent;
+  g("scanCount").textContent="สแกนแล้ว "+S.scanned.length+" จุด";
+  g("barFill").style.width=(S.scanned.length/POINTS.length*100)+"%";
+  g("ptDone").textContent=S.scanned.length+"/"+POINTS.length;
+  g("myBal").textContent=balance()+" คะแนน";
+  renderPoints();renderRewards();renderTickets();
+}
+function isDone(id){for(var i=0;i<S.scanned.length;i++)if(S.scanned[i].id===id)return true;return false;}
+function renderPoints(){
+  var h="";
+  for(var i=0;i<POINTS.length;i++){
+    var p=POINTS[i],d=isDone(p.id);
+    if(FILTER==="done"&&!d)continue;
+    if(FILTER==="todo"&&d)continue;
+    h+='<div class="pt '+(d?"done":"")+'"><div class="pt-no">'+(d?"✓":p.no)+'</div><div class="pt-name">'+p.name+'</div><div class="pt-pts">'+p.pts+' คะแนน</div></div>';
+  }
+  g("pointList").innerHTML=h||'<div class="empty">ไม่มีรายการ</div>';
+}
+function renderRewards(){
+  var h="";
+  for(var i=0;i<REWARDS.length;i++){var r=REWARDS[i],ok=balance()>=r.cost;
+    h+='<div class="rw"><div class="rw-ico" style="background:'+r.bg+'">'+r.ico+'</div><div class="rw-info"><b>'+r.name+'</b><small>ใช้ '+r.cost+' คะแนน</small></div><button '+(ok?"":"disabled")+' onclick="startRedeem(\''+r.id+'\')">'+(ok?"แลกเลย":"คะแนนไม่พอ")+'</button></div>';}
+  g("rewardList").innerHTML=h;
+}
+function getRw(id){for(var i=0;i<REWARDS.length;i++)if(REWARDS[i].id===id)return REWARDS[i];return {id:id,name:id,ico:"🎁",bg:"#eee",cost:0};}
+function renderTickets(){
+  if(!S.tickets.length){g("ticketList").innerHTML='<div class="empty"><div class="big">🎫</div>ยังไม่มีบัตรรับของรางวัล</div>';return;}
+  var h="";
+  for(var i=0;i<S.tickets.length;i++){var t=S.tickets[i],r=getRw(t.reward);
+    h+='<div class="tk"><div class="rw-ico" style="background:'+r.bg+';width:44px;height:44px;font-size:22px">'+r.ico+'</div><div class="rw-info"><b>'+r.name+'</b><small>รหัส '+t.code+'</small></div><div><span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"✅ รับของแล้ว":"⏳ รอรับของ")+'</span><br><button onclick="showTicket(\''+t.code+'\')" style="margin-top:6px">แสดง QR</button></div></div>';}
+  g("ticketList").innerHTML=h;
+}
+
+var qr=null,MODE="checkin";
+function startScan(mode){
+  MODE=mode;
+  g("scanTitle").textContent=mode==="admin"?"สแกนบัตรรับของรางวัล":"สแกน QR Code เช็คอิน";
+  g("scanHint").textContent=mode==="admin"?"หันกล้องไปที่ QR บัตรของผู้ร่วมสนุก":"หันกล้องไปที่ QR Code ประจำจุด";
+  if(mode==="admin"){ closeM("mdAdmin"); }
+  openM("mdScan");
+  if(typeof Html5Qrcode==="undefined"){toast("โหลดตัวอ่าน QR ไม่ได้ ใช้ช่องกรอกรหัสแทนได้");return;}
+  qr=new Html5Qrcode("reader");
+  qr.start({facingMode:"environment"},{fps:10,qrbox:{width:230,height:230}},
+    function(txt){stopScan();closeScan();handleCode(txt);},function(){})
+   .catch(function(){toast("เปิดกล้องไม่ได้ — ต้องเปิดผ่าน https และกดอนุญาตกล้อง");});
+}
+function stopScan(){if(qr){try{qr.stop().then(function(){qr.clear();});}catch(e){}qr=null;}}
+function closeScan(){
+  stopScan();
+  closeM("mdScan");
+  if(MODE==="admin"){ openM("mdAdmin"); }
+}
+function closeAdmin(){ closeM("mdAdmin"); }
+function useManual(){var v=g("manualCode").value.trim();if(!v)return;g("manualCode").value="";stopScan();closeScan();handleCode(v);}
+function handleCode(txt){
+  txt=(txt||"").trim();
+  if(MODE==="admin")return adminVerify(txt);
+
+  var p=null;
+  for(var i=0;i<POINTS.length;i++){
+    if(POINTS[i].code.toUpperCase() === txt.toUpperCase() || POINTS[i].id.toUpperCase() === txt.toUpperCase()){
+      p = POINTS[i]; break;
+    }
+  }
+  if(!p)return toast("❌ QR Code นี้ไม่ถูกต้อง");
+  if(isDone(p.id))return toast("⚠️ จุดนี้สแกนไปแล้ว");
+  S.scanned.push({id:p.id,no:p.no,name:p.name,pts:p.pts,time:new Date().toLocaleString("th-TH")});
+  save();render();
+  showPopup(p.name, p.pts);
+}
+
+var pendingReward=null,satVal="";
+function setSat(el,v){satVal=v;var b=g("satBox").getElementsByTagName("button");for(var i=0;i<b.length;i++)b[i].className="";el.className="on";}
+function startRedeem(id){
+  var r=getRw(id);
+  if(balance()<r.cost)return toast("คะแนนไม่พอ");
+  pendingReward=r;
+  if(S.survey){if(confirm("ยืนยันใช้ "+r.cost+" คะแนน แลก "+r.name+" ?"))doRedeem();}
+  else openM("mdSurvey");
+}
+function submitSurvey(e){
+  e.preventDefault();
+  if(!satVal){toast("กรุณาเลือกระดับความพึงพอใจ");return false;}
+  var f=e.target;
+  S.survey={fullname:f.fullname.value,age:f.age.value,address:f.address.value,
+    travel:f.travel.value,shuttle:f.shuttle.value,visits:f.visits.value,
+    satisfaction:satVal,suggest:(f.suggest.value||"-").substring(0,300)};
+  save();closeM("mdSurvey");doRedeem();return false;
+}
+function doRedeem(){
+  var r=pendingReward;
+  var code=r.id.substring(0,2).toUpperCase()+Date.now().toString(36).slice(-5).toUpperCase();
+  S.spent+=r.cost;
+  S.tickets.push({reward:r.id,code:code,confirmed:false,time:new Date().toLocaleString("th-TH")});
+  save();render();showTicket(code);
+  sendSheet(r,code);
+}
+function sendSheet(r,code){
+  if(!CONFIG.GAS_URL)return;
+  var d={action:"redeem",uid:S.uid,reward:r.name,cost:r.cost,code:code,
+    totalScan:S.scanned.length,totalEarn:earned()};
+  for(var k in S.survey)d[k]=S.survey[k];
+  toast("⏳ กำลังบันทึกข้อมูล...");
+  sendToBeacon(d,function(){
+    toast("🎉 แลก "+r.name+" สำเร็จ · บันทึกข้อมูลแล้ว");
+  });
+}
+function showTicket(code){
+  var t=null;for(var i=0;i<S.tickets.length;i++)if(S.tickets[i].code===code)t=S.tickets[i];
+  if(!t)return;
+  var r=getRw(t.reward);
+  var body='<div class="rw-ico" style="margin:0 auto 10px;background:'+r.bg+';width:70px;height:70px;font-size:36px">'+r.ico+'</div>'+
+    '<b style="font-size:19px">'+r.name+'</b>'+
+    '<p class="muted">'+(t.confirmed?"รับของเรียบร้อยแล้ว — บัตรนี้ใช้แล้ว":"แสดง QR นี้ให้เจ้าหน้าที่สแกน")+'</p>';
+  if(t.confirmed){
+    body+='<div style="display:flex;justify-content:center;background:#f1f5f9;padding:26px;border-radius:20px;font-size:54px">✅</div>';
+  }else{
+    body+='<div id="tkQR" style="display:flex;justify-content:center;background:#fff;padding:16px;border-radius:20px"></div>';
+  }
+  body+='<p style="margin-top:10px;font-weight:700">รหัส '+t.code+'</p>'+
+    '<span class="tk-s '+(t.confirmed?"s-ok":"s-wait")+'">'+(t.confirmed?"✅ รับของแล้ว":"⏳ รอรับของ")+'</span>';
+  g("ticketBody").innerHTML=body;
+  if(!t.confirmed){
+    g("tkQR").appendChild(qrImg(CONFIG.PT+S.uid+"|"+t.reward+"|"+t.code,200));
+    startTkPoll(code);
+  }else{ stopTkPoll(); }
+  openM("mdTicket");
+}
+
+function adminLogin(){
+  var v=g("adminPin").value.replace(/\s/g,"");
+  if(v===CONFIG.ADMIN_PIN){g("adminPin").value="";g("adminErr").textContent="";openM("mdAdmin");buildQR();renderLog();}
+  else{g("adminErr").textContent="รหัสผ่านไม่ถูกต้อง";}
+}
+var LOG=[];try{LOG=JSON.parse(localStorage.getItem("msp69log"))||[];}catch(e){LOG=[];}
+function buildQR(){
+  var gr=g("qrGrid");if(gr.getAttribute("data-built"))return;gr.setAttribute("data-built","1");
+  for(var i=0;i<POINTS.length;i++){var p=POINTS[i];
+    var d=document.createElement("div");d.className="qr-item";
+    d.appendChild(qrImg(p.code,120)); // ใช้รหัสลับสุ่มประจำจุดในการสร้าง QR
+    var n=document.createElement("div");n.className="n";n.innerHTML="จุดที่ "+p.no+" · "+p.pts+" คะแนน<br>"+p.name;d.appendChild(n);
+    var c=document.createElement("div");c.className="c";c.textContent=p.code;d.appendChild(c);
+    gr.appendChild(d);}
+}
+function adminVerify(txt){
+  if(txt.indexOf(CONFIG.PT)!==0)return toast("❌ ไม่ใช่บัตรรับของรางวัล");
+  var a=txt.split("|"),uid=a[1],rw=a[2],code=a[3],r=getRw(rw);
+
+  // 1) เช็คจากบันทึกในเครื่องก่อน (เร็ว + ใช้ได้แม้เน็ตหลุด)
+  var lg=findGiven(code);
+  if(lg)return showGivenBox(r,code,uid,lg.time);
+
+  // 2) เช็คกับเซิร์ฟเวอร์ (กันข้ามเครื่องแอดมิน)
+  g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:34px">⏳</div><b>กำลังตรวจสอบสถานะบัตร...</b><p class="muted">รหัสบัตร: '+code+'</p></div>';
+  gasGet({action:"check",code:code,uid:uid},function(res){
+    if(res&&res.ok&&res.confirmed){
+      LOG.push({code:code,reward:r.name,uid:uid,time:res.time||"-"});
+      try{localStorage.setItem("msp69log",JSON.stringify(LOG));}catch(e){}
+      renderLog();
+      return showGivenBox(r,code,uid,res.time);
+    }
+    var warn=res?"":'<p class="muted" style="color:#d97706">⚠️ ตรวจสอบกับเซิร์ฟเวอร์ไม่ได้ — กรุณาตรวจสอบก่อนจ่ายของ</p>';
+    g("verifyResult").innerHTML='<div class="vr"><b style="font-size:17px">'+r.ico+' '+r.name+'</b>'+
+      '<p class="muted">รหัสบัตร: '+code+'<br>ผู้เล่น: '+uid+'</p>'+warn+
+      '<button class="primary" id="btnGive" onclick="confirmGive(\''+uid+'\',\''+rw+'\',\''+code+'\')">✅ ยืนยันการรับของที่ระลึก</button></div>';
+  });
+}
+function confirmGive(uid,rw,code){
+  var r=getRw(rw),btn=g("btnGive");
+  var lg=findGiven(code);
+  if(lg)return showGivenBox(r,code,uid,lg.time);
+  if(btn&&btn.disabled)return;
+  if(btn){btn.disabled=true;btn.textContent="⏳ กำลังยืนยัน...";}
+  sendToBeacon({action:"confirm",code:code,uid:uid,reward:r.name,time:new Date().toLocaleString("th-TH")},function(){
+    localGive(uid,rw,code);
+  });
+}
+function localGive(uid,rw,code){
+  var r=getRw(rw),now=new Date().toLocaleString("th-TH");
+  if(!findGiven(code)){
+    LOG.push({code:code,reward:r.name,uid:uid,time:now});
+    try{localStorage.setItem("msp69log",JSON.stringify(LOG));}catch(e){}
+  }
+  for(var i=0;i<S.tickets.length;i++)if(S.tickets[i].code===code){S.tickets[i].confirmed=true;save();render();}
+  g("verifyResult").innerHTML='<div class="vr" style="text-align:center"><div style="font-size:44px">✅</div><b>ยืนยันสำเร็จ</b><p class="muted">'+r.name+' · '+code+'<br>'+now+'</p><button class="primary" onclick="startScan(\'admin\')">📷 สแกนใบถัดไป</button></div>';
+  renderLog();
+  toast("ยืนยันการรับของเรียบร้อย");
+}
+function renderLog(){
+  if(!LOG.length){g("adminLog").innerHTML='<div class="empty"><div class="big">📋</div>ยังไม่มีการยืนยันรับของ</div>';return;}
+  var h="";for(var i=LOG.length-1;i>=0;i--){var l=LOG[i];
+    h+='<div class="his"><div><b>'+l.reward+'</b><br><small>'+l.code+' · '+l.time+'</small></div><span class="tk-s s-ok">รับแล้ว</span></div>';}
+  g("adminLog").innerHTML=h;
+}
+
+/* ===== เริ่มระบบ ===== */
+var sh="",SATS=["มากที่สุด","มาก","พอใช้","น้อย","น้อยที่สุด"];
+for(var s=0;s<SATS.length;s++)sh+='<button type="button" onclick="setSat(this,\''+SATS[s]+'\')">'+SATS[s]+'</button>';
+g("satBox").innerHTML=sh;
+g("adminPin").addEventListener("keydown",function(e){if(e.key==="Enter")adminLogin();});
+g("jsflag").style.display="block";
+g("jsflag").textContent="✅ ระบบพร้อมใช้งาน · เชื่อมต่อ Google Sheet แล้ว";
+render();
+
+/* ===== [ADD] sync สถานะบัตรตอนเปิดแอป / กลับเข้าหน้าจอ ===== */
+syncTickets();
+document.addEventListener("visibilitychange",function(){ if(!document.hidden)syncTickets(); });
+</script>
+</body>
+</html>
