@@ -143,7 +143,7 @@ legend{font-size:14.5px;font-weight:600;padding:0 6px}
     <div class="score-head"><span class="label">คะแนนสะสมของคุณ</span>
       <button class="chip" onclick="goPoints()">📍 จุด ›</button></div>
     <div class="score-main"><div class="score-num" id="scoreNum">0</div><div class="score-unit">คะแนน</div></div>
-    <div class="score-foot"><span>จำนวนจุดที่สแกนแล้ว</span><span id="scanCount">สแกนแล้ว 0 จุด</span></div>
+    <div class="score-foot"><span>จำนวนจุดที่สแกนแล้ววันนี้</span><span id="scanCount">สแกนแล้ว 0 จุด</span></div>
     <div class="bar"><div class="bar-fill" id="barFill"></div></div>
     <div class="score-mini"><span>ได้มาทั้งหมด <b id="earned">0</b></span><span>ใช้ไปแล้ว <b id="spent">0</b></span></div>
   </section>
@@ -275,7 +275,7 @@ window.onerror=function(m,s,l){if(l>0){var b=g('errbox');b.style.display='block'
 
 var CONFIG={
   GAS_URL:"https://script.google.com/macros/s/AKfycbzuJrVNTOlgpawOaMgXcAuT4k4Y_yg6Qb7RgNnhsjpViLwIFSLx9PW6j7PWazZosNgU/exec",
-  ADMIN_PIN:"1234", PP:"MSP69-", PT:"MSP69T|"
+  ADMIN_PIN:"7456", PP:"MSP69-", PT:"MSP69T|"
 };
 
 var NAMES=[
@@ -503,13 +503,29 @@ function render(){
   g("scoreNum").textContent=balance();
   g("earned").textContent=earned();
   g("spent").textContent=S.spent;
-  g("scanCount").textContent="สแกนแล้ว "+S.scanned.length+" จุด";
-  g("barFill").style.width=(S.scanned.length/POINTS.length*100)+"%";
-  g("ptDone").textContent=S.scanned.length+"/"+POINTS.length;
+  
+  // นับเฉพาะจุดที่สแกนใน "วันนี้"
+  var todayStr=new Date().toDateString();
+  var todayCount=0;
+  for(var i=0;i<S.scanned.length;i++){
+    var scanDate = S.scanned[i].rawDate ? new Date(S.scanned[i].rawDate).toDateString() : todayStr;
+    if(scanDate === todayStr) todayCount++;
+  }
+  g("scanCount").textContent="สแกนแล้ว "+todayCount+" จุดวันนี้";
+  g("barFill").style.width=(todayCount/POINTS.length*100)+"%";
+  g("ptDone").textContent=todayCount+"/"+POINTS.length;
+
   g("myBal").textContent=balance()+" คะแนน";
   renderPoints();renderRewards();renderTickets();
 }
-function isDone(id){for(var i=0;i<S.scanned.length;i++)if(S.scanned[i].id===id)return true;return false;}
+function isDone(id){
+  var todayStr=new Date().toDateString();
+  for(var i=0;i<S.scanned.length;i++){
+    var scanDate = S.scanned[i].rawDate ? new Date(S.scanned[i].rawDate).toDateString() : todayStr;
+    if(S.scanned[i].id===id && scanDate === todayStr) return true;
+  }
+  return false;
+}
 function renderPoints(){
   var h="";
   for(var i=0;i<POINTS.length;i++){
@@ -567,8 +583,8 @@ function handleCode(txt){
     }
   }
   if(!p)return toast("❌ QR Code นี้ไม่ถูกต้อง");
-  if(isDone(p.id))return toast("⚠️ จุดนี้สแกนไปแล้ว");
-  S.scanned.push({id:p.id,no:p.no,name:p.name,pts:p.pts,time:new Date().toLocaleString("th-TH")});
+  if(isDone(p.id))return toast("⚠️ จุดนี้สแกนไปแล้วในวันนี้");
+  S.scanned.push({id:p.id,no:p.no,name:p.name,pts:p.pts,time:new Date().toLocaleString("th-TH"),rawDate:new Date().toISOString()});
   save();render();
   showPopup(p.name, p.pts);
 }
